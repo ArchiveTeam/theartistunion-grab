@@ -58,7 +58,7 @@ if not WGET_LUA:
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = '201906262.00'
+VERSION = '20190706.00'
 USER_AGENT = 'ArchiveTeam'
 TRACKER_ID = 'theartistunion'
 TRACKER_HOST = 'tracker.archiveteam.org'
@@ -160,6 +160,14 @@ def stats_id_function(item):
 
 
 class WgetArgs(object):
+    post_chars = string.digits + 'abcdef'
+
+    def int_to_str(self, i):
+        d, m = divmod(i, 16)
+        if d > 0:
+            return self.int_to_str(d) + self.post_chars[m]
+        return self.post_chars[m]
+
     def realize(self, item):
         wget_args = [
             WGET_LUA,
@@ -194,11 +202,14 @@ class WgetArgs(object):
         item['item_type'] = item_type
         item['item_value'] = item_value
 
-        if item_type == 'tracks-discovery':
+        if item_type == 'tracks':
             start, end = (int(i) for i in item_value.split('-'))
-            for id_ in range(start, end+1):
-                wget_args.extend(['--warc-header', 'theartistunion-track-id: {}'.format(id_)])
-                wget_args.append('https://theartistunion.com/api/v3/tracks/{}.json'.format(id_))
+            for identifier in range(start, end+1):
+                identifier = self.int_to_str(identifier)
+                wget_args.extend(['--warc-header', 'theartistunion-track-id: {}'.format(identifier)])
+                wget_args.append('https://theartistunion.com/api/v3/tracks/{}.json'.format(identifier))
+                wget_args.append('https://theartistunion.com/api/v3/tracks/{}/related.json'.format(identifier))
+                wget_args.append('https://theartistunion.com/tracks/{}'.format(identifier))
         else:
             raise Exception('Unknown item')
 
