@@ -58,7 +58,7 @@ if not WGET_LUA:
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = '20190706.01'
+VERSION = '20190706.02'
 USER_AGENT = 'ArchiveTeam'
 TRACKER_ID = 'theartistunion'
 TRACKER_HOST = 'tracker.archiveteam.org'
@@ -230,7 +230,7 @@ class WgetArgs(object):
 project = Project(
     title = 'theartistunion',
     project_html = '''
-    <img class="project-logo" alt="logo" src="https://www.archiveteam.org/index.php?title=File:The_Artist_Union-logo-20190626.PNG" height="50px"/>
+    <img class="project-logo" alt="logo" src="https://www.archiveteam.org/images/5/5d/The_Artist_Union-logo-20190626.PNG" height="50px"/>
     <h2>theartistunion.com <span class="links"><a href="https://theartistunion.com">Website</a> &middot; <a href="http://tracker.archiveteam.org/theartistunion/">Leaderboard</a></span></h2>
     '''
 )
