@@ -143,6 +143,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
 
   if string.match(url, "^https?://theartistunion%.com/api/v3/tracks/[0-9a-f]+%.json$") then
     ids[string.match(url, "([0-9a-f]+)%.json$")] = true
+    original_fails = 0
   end
 
   if string.match(url, "^https?://[^%.]+%.cloudfront%.net/tracks/stream_files/.+%.mp3%?[0-9]+$") then
