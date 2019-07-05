@@ -205,7 +205,7 @@ class WgetArgs(object):
         if item_type == 'tracks':
             start, end = (int(i) for i in item_value.split('-'))
             for identifier in range(start, end+1):
-                identifier = self.int_to_str(identifier)
+                identifier = self.int_to_str(identifier).zfill(6)
                 wget_args.extend(['--warc-header', 'theartistunion-track-id: {}'.format(identifier)])
                 wget_args.append('https://theartistunion.com/api/v3/tracks/{}.json'.format(identifier))
                 wget_args.append('https://theartistunion.com/api/v3/tracks/{}/related.json'.format(identifier))

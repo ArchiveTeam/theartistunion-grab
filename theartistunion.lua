@@ -150,7 +150,8 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
   end
 
   if allowed(url, nil)
-      and not string.match(url, "^https?://[^%.]+%.cloudfront%.net") then
+      and not string.match(url, "^https?://[^%.]+%.cloudfront%.net")
+      and status_code ~= 404 then
     html = read_file(file)
     if string.match(url, "^https?://theartistunion%.com/api/v3/tracks/[0-9a-f]+%.json$") then
       json = load_json_file(html)
