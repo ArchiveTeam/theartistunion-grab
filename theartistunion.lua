@@ -14,6 +14,7 @@ local addedtolist = {}
 local abortgrab = false
 
 local ids = {}
+local original_fails = 0
 
 for ignore in io.open("ignore-list", "r"):lines() do
   downloaded[ignore] = true
@@ -147,6 +148,8 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
   if string.match(url, "^https?://[^%.]+%.cloudfront%.net/tracks/stream_files/.+%.mp3%?[0-9]+$") then
     local a, b = string.match(url, "^(https?://[^%.]+%.cloudfront%.net/tracks/)stream_files(/.+)%.mp3%?[0-9]+$")
     table.insert(urls, { url=a .. "original_files" .. b .. ".wav" })
+    table.insert(urls, { url=a .. "original_files" .. b .. ".mp3" })
+    -- IMPORTANT make sure to set number of fails possible in httploop_result
   end
 
   if allowed(url, nil)
@@ -206,9 +209,12 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
     downloaded[string.gsub(url["url"], "https?://", "http://")] = true
   end
 
-  if status_code ~= 200 and string.match(url["url"], "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.wav$") then
-    io.stdout:write("Could not get original file...\n")
-    abortgrab = true
+  if status_code ~= 200 and string.match(url["url"], "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.[a-z0-9]+$") then
+    original_fails = original_fails + 1
+    if original_fails == 2 then
+      io.stdout:write("Could not get original file...\n")
+      abortgrab = true
+    end
   end
 
   if abortgrab == true then
