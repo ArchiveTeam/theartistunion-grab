@@ -158,8 +158,11 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
       and status_code ~= 404 then
     html = read_file(file)
     if string.match(url, "^https?://theartistunion%.com/api/v3/tracks/[0-9a-f]+%.json$") then
+      identifier = string.match(url, "^https?://theartistunion%.com/api/v3/tracks/([0-9a-f]+)%.json$")
+      check("https://theartistunion.com/api/v3/tracks/" .. identifier .. "/related.json")
+      check("https://theartistunion.com/tracks/" .. identifier)
       json = load_json_file(html)
-      check(json['audio_source'])
+      check(json["audio_source"])
     end
     for newurl in string.gmatch(string.gsub(html, "&quot;", '"'), '([^"]+)') do
       checknewurl(newurl)

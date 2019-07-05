@@ -58,7 +58,7 @@ if not WGET_LUA:
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = '20190706.04'
+VERSION = '20190706.05'
 USER_AGENT = 'ArchiveTeam'
 TRACKER_ID = 'theartistunion'
 TRACKER_HOST = 'tracker.archiveteam.org'
@@ -208,8 +208,6 @@ class WgetArgs(object):
                 identifier = self.int_to_str(identifier).zfill(6)
                 wget_args.extend(['--warc-header', 'theartistunion-track-id: {}'.format(identifier)])
                 wget_args.append('https://theartistunion.com/api/v3/tracks/{}.json'.format(identifier))
-                wget_args.append('https://theartistunion.com/api/v3/tracks/{}/related.json'.format(identifier))
-                wget_args.append('https://theartistunion.com/tracks/{}'.format(identifier))
         else:
             raise Exception('Unknown item')
 
