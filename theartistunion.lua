@@ -162,6 +162,10 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
       check("https://theartistunion.com/api/v3/tracks/" .. identifier .. "/related.json")
       check("https://theartistunion.com/tracks/" .. identifier)
       json = load_json_file(html)
+      if not string.match(json["audio_source"], "^https?://[^%.]+%.cloudfront%.net/tracks/stream_files/.+%.mp3%?[0-9]+$") then
+        io.stdout:write("Strange looking audio_source URL...\n")
+        abortgrab = true
+      end
       check(json["audio_source"])
     end
     for newurl in string.gmatch(string.gsub(html, "&quot;", '"'), '([^"]+)') do
