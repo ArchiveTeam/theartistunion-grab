@@ -41,7 +41,9 @@ end
 
 allowed = function(url, parenturl)
   if string.match(url, "'+")
-      or string.match(url, "[<>\\%*%$;%^%[%],%(%){}]") then
+      or string.match(url, "[<>\\%*%$;%^%[%],%(%){}]")
+      or string.match(url, "^https?://facebook%.com")
+      or string.match(url, "^https?://www%.?youtube%.com")then
     return false
   end
 
@@ -134,8 +136,6 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
         or string.match(newurl, "^[jJ]ava[sS]cript:")
         or string.match(newurl, "^[mM]ail[tT]o:")
         or string.match(newurl, "^vine:")
-        or string.match(newurl, "^https?://facebook%.com")
-        or string.match(newurl, "^https?://[^%.]+%.facebook%.com")
         or string.match(newurl, "^android%-app:")
         or string.match(newurl, "^ios%-app:")
         or string.match(newurl, "^%${")) then
