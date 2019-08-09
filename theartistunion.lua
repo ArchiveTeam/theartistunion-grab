@@ -134,6 +134,8 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
         or string.match(newurl, "^[jJ]ava[sS]cript:")
         or string.match(newurl, "^[mM]ail[tT]o:")
         or string.match(newurl, "^vine:")
+        or string.match(newurl, "^https?://facebook%.com")
+        or string.match(newurl, "^https?://[^%.]+%.facebook%.com")
         or string.match(newurl, "^android%-app:")
         or string.match(newurl, "^ios%-app:")
         or string.match(newurl, "^%${")) then
@@ -168,9 +170,21 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
       check("https://theartistunion.com/tracks/" .. identifier)
       json = load_json_file(html)
       if not (string.match(json["audio_source"], "^https?://[^%.]+%.cloudfront%.net/tracks/stream_files/.+%.mp3%?[0-9]+$")
-          or string.match(json["audio_source"], "^https?://content%.theartistunion%.com/tracks/audio/stream_encode/[^%.]+%.mp3$")) then
+          or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.wav%?[0-9]+$")
+          or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.mp3%?[0-9]+$")
+          or string.match(json["audio_source"], "^https?://content%.theartistunion%.com/tracks/audio/stream_encode/.+%.mp3$")) then
         io.stdout:write("Strange looking audio_source URL...\n")
         abortgrab = true
+      end
+      if string.match(json["audio_source"], "%'") then
+        audio_source = json["audio_source"]
+        audio_source = audio_source:gsub("%'","%%27")
+        check(audio_source)
+      end
+      if string.match(json["audio_source"], "%,") then
+        audio_source = json["audio_source"]
+        audio_source = audio_source:gsub("%,","%%2C")
+        check(audio_source)
       end
       check(json["audio_source"])
     end
