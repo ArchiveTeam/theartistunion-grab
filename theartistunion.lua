@@ -152,25 +152,25 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     local a, b = string.match(url, "^(https?://[^%.]+%.cloudfront%.net/tracks/)stream_files(/.+)%.mp3%?[0-9]+$")
     table.insert(urls, { url=a .. "original_files" .. b .. ".wav" })
     table.insert(urls, { url=a .. "original_files" .. b .. ".mp3" })
-	table.insert(urls, { url=a .. "original_files" .. b .. ".asf" })
-	table.insert(urls, { url=a .. "original_files" .. b .. ".aif" })
-	table.insert(urls, { url=a .. "original_files" .. b .. ".m4a" })
+    table.insert(urls, { url=a .. "original_files" .. b .. ".asf" })
+    table.insert(urls, { url=a .. "original_files" .. b .. ".aif" })
+    table.insert(urls, { url=a .. "original_files" .. b .. ".m4a" })
     -- IMPORTANT make sure to set number of fails possible in httploop_result
   elseif string.match(url, "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.wav%?[0-9]+$") then
     local a, b = string.match(url, "^(https?://[^%.]+%.cloudfront%.net/tracks/)original_files(/.+)%.wav%?[0-9]+$")
     table.insert(urls, { url=a .. "original_files" .. b .. ".wav" })
     table.insert(urls, { url=a .. "original_files" .. b .. ".mp3" })
     table.insert(urls, { url=a .. "original_files" .. b .. ".asf" })
-	table.insert(urls, { url=a .. "original_files" .. b .. ".aif" })
-	table.insert(urls, { url=a .. "original_files" .. b .. ".m4a" })
+    table.insert(urls, { url=a .. "original_files" .. b .. ".aif" })
+    table.insert(urls, { url=a .. "original_files" .. b .. ".m4a" })
     -- IMPORTANT make sure to set number of fails possible in httploop_result
   elseif string.match(url, "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.mp3%?[0-9]+$") then
     local a, b = string.match(url, "^(https?://[^%.]+%.cloudfront%.net/tracks/)original_files(/.+)%.mp3%?[0-9]+$")
     table.insert(urls, { url=a .. "original_files" .. b .. ".wav" })
     table.insert(urls, { url=a .. "original_files" .. b .. ".mp3" })
-	table.insert(urls, { url=a .. "original_files" .. b .. ".asf" })
-	table.insert(urls, { url=a .. "original_files" .. b .. ".aif" })
-	table.insert(urls, { url=a .. "original_files" .. b .. ".m4a" })
+    table.insert(urls, { url=a .. "original_files" .. b .. ".asf" })
+    table.insert(urls, { url=a .. "original_files" .. b .. ".aif" })
+    table.insert(urls, { url=a .. "original_files" .. b .. ".m4a" })
     -- IMPORTANT make sure to set number of fails possible in httploop_result
   elseif string.match(url, "^https?://content%.theartistunion%.com/tracks/audio/stream_encode/.+%.mp3$") then
     local a, b = string.match(url, "^(https?://content%.theartistunion%.com/tracks/audio/)stream_encode(/.+)%.mp3$")
