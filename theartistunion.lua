@@ -203,6 +203,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
         if not (string.match(json["audio_source"], "^https?://[^%.]+%.cloudfront%.net/tracks/stream_files/.+%.mp3%?[0-9]+$")
             or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.wav%?[0-9]+$")
             or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.mp3%?[0-9]+$")
+            or string.match(json["audio_source"],  "https?://content%.theartistunion%.com/tracks/audio/%x+/.+%.mp3$")
             or string.match(json["audio_source"], "^https?://content%.theartistunion%.com/tracks/audio/stream_encode/.+%.mp3$")) then
           io.stdout:write("Strange looking audio_source URL...\n")
           abortgrab = true
@@ -273,7 +274,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
 
   if status_code ~= 200 and string.match(url["url"], "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.[a-z0-9]+$") then
     original_fails = original_fails + 1
-    if original_fails == 5 then
+    if original_fails == 6 then
       io.stdout:write("Could not get original file...\n")
       abortgrab = true
     end
