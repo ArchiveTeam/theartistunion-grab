@@ -203,6 +203,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
         if not (string.match(json["audio_source"], "^https?://[^%.]+%.cloudfront%.net/tracks/stream_files/.+%.mp3%?[0-9]+$")
             or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.wav%?[0-9]+$")
             or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.mp3%?[0-9]+$")
+            or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.m4a%?[0-9]+$")
             or string.match(json["audio_source"],  "https?://content%.theartistunion%.com/tracks/audio/%x+/.+%.mp3$")
             or string.match(json["audio_source"], "^https?://content%.theartistunion%.com/tracks/audio/stream_encode/.+%.mp3$")) then
           io.stdout:write("Strange looking audio_source URL...\n")
