@@ -152,28 +152,34 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     local a, b = string.match(url, "^(https?://[^%.]+%.cloudfront%.net/tracks/)stream_files(/.+)%.mp3%?[0-9]+$")
     table.insert(urls, { url=a .. "original_files" .. b .. ".wav" })
     table.insert(urls, { url=a .. "original_files" .. b .. ".mp3" })
+    table.insert(urls, { url=a .. "original_files" .. b .. ".mp4" })
     table.insert(urls, { url=a .. "original_files" .. b .. ".asf" })
     table.insert(urls, { url=a .. "original_files" .. b .. ".aif" })
     table.insert(urls, { url=a .. "original_files" .. b .. ".m4a" })
     table.insert(urls, { url=a .. "original_files" .. b .. ".flac" })
+    table.insert(urls, { url=a .. "original_files" .. b .. })
     -- IMPORTANT make sure to set number of fails possible in httploop_result
   elseif string.match(url, "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.wav%?[0-9]+$") then
     local a, b = string.match(url, "^(https?://[^%.]+%.cloudfront%.net/tracks/)original_files(/.+)%.wav%?[0-9]+$")
     table.insert(urls, { url=a .. "original_files" .. b .. ".wav" })
     table.insert(urls, { url=a .. "original_files" .. b .. ".mp3" })
+    table.insert(urls, { url=a .. "original_files" .. b .. ".mp4" })
     table.insert(urls, { url=a .. "original_files" .. b .. ".asf" })
     table.insert(urls, { url=a .. "original_files" .. b .. ".aif" })
     table.insert(urls, { url=a .. "original_files" .. b .. ".m4a" })
     table.insert(urls, { url=a .. "original_files" .. b .. ".flac" })
+    table.insert(urls, { url=a .. "original_files" .. b .. })
     -- IMPORTANT make sure to set number of fails possible in httploop_result
   elseif string.match(url, "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.mp3%?[0-9]+$") then
     local a, b = string.match(url, "^(https?://[^%.]+%.cloudfront%.net/tracks/)original_files(/.+)%.mp3%?[0-9]+$")
     table.insert(urls, { url=a .. "original_files" .. b .. ".wav" })
     table.insert(urls, { url=a .. "original_files" .. b .. ".mp3" })
+    table.insert(urls, { url=a .. "original_files" .. b .. ".mp4" })
     table.insert(urls, { url=a .. "original_files" .. b .. ".asf" })
     table.insert(urls, { url=a .. "original_files" .. b .. ".aif" })
     table.insert(urls, { url=a .. "original_files" .. b .. ".m4a" })
     table.insert(urls, { url=a .. "original_files" .. b .. ".flac" })
+    table.insert(urls, { url=a .. "original_files" .. b .. })
 	-- IMPORTANT make sure to set number of fails possible in httploop_result
   elseif string.match(url, "^https?://content%.theartistunion%.com/tracks/audio/stream_encode/.+%.mp3$") then
     local a, b = string.match(url, "^(https?://content%.theartistunion%.com/tracks/audio/)stream_encode(/.+)%.mp3$")
@@ -200,10 +206,10 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
         abortgrab = true
       end
 	  if abortgrab == false then
-        if not (string.match(json["audio_source"], "^https?://[^%.]+%.cloudfront%.net/tracks/stream_files/.+%.mp3%?[0-9]+$")
-            or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.wav%?[0-9]+$")
-            or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.mp3%?[0-9]+$")
-            or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.m4a%?[0-9]+$")
+        if not (string.match(json["audio_source"], "^https?://[^%.]+%.cloudfront%.net/tracks/stream_files/.+%.mp3[%?0-9]+$")
+            or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.wav[%?0-9]+$")
+            or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.mp3[%?0-9]+$")
+            or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.m4a[%?0-9]+$")
             or string.match(json["audio_source"],  "https?://content%.theartistunion%.com/tracks/audio/%x+/.+%.mp3$")
             or string.match(json["audio_source"], "^https?://content%.theartistunion%.com/tracks/audio/stream_encode/.+%.mp3$")) then
           io.stdout:write("Strange looking audio_source URL...\n")
