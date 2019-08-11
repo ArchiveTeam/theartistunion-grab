@@ -281,7 +281,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
 
   if status_code ~= 200 and string.match(url["url"], "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.[a-z0-9]+$") then
     original_fails = original_fails + 1
-    if original_fails == 6 then
+    if original_fails == 8 then
       io.stdout:write("Could not get original file...\n")
       abortgrab = true
     end
