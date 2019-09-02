@@ -215,10 +215,10 @@ class WgetArgs(object):
                 json = json.loads(r.text)
                 url = json['url']
                 head, sep, tail = url.partition('?')
-				wget_args.append(url)
-				wget_args.append(head)
-				print("added " + url)
-				print("added " + head)
+                wget_args.append(url)
+                wget_args.append(head)
+                print("added " + url)
+                print("added " + head)
 
 				
         else:
