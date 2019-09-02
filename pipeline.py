@@ -17,7 +17,6 @@ import sys
 import time
 import string
 import requests
-import json
 
 import seesaw
 from seesaw.externalprocess import WgetDownload
@@ -212,8 +211,7 @@ class WgetArgs(object):
                 wget_args.append('https://theartistunion.com/api/v3/tracks/{}.json'.format(identifier))
                 cookies = {"_artistunion_session":"0deaeeddc89ab045227f582359c65f86"}
                 r = requests.post('https://theartistunion.com/api/v3/tracks/{}/download.json'.format(identifier), json={"comment": "ArchiveTeam Archived This!"}, cookies=cookies)
-                json = json.loads(r.text)
-                url = json['url']
+                url = r.text[8:-2]
                 head, sep, tail = url.partition('?')
                 wget_args.append(url)
                 wget_args.append(head)
