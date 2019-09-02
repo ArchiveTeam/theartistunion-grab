@@ -16,6 +16,7 @@ import subprocess
 import sys
 import time
 import string
+import requests
 
 import seesaw
 from seesaw.externalprocess import WgetDownload
@@ -58,7 +59,7 @@ if not WGET_LUA:
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = '20190811.07'
+VERSION = '20190902.02'
 USER_AGENT = 'ArchiveTeam'
 TRACKER_ID = 'theartistunion'
 TRACKER_HOST = 'tracker.archiveteam.org'
@@ -208,6 +209,16 @@ class WgetArgs(object):
                 identifier = self.int_to_str(identifier).zfill(6)
                 wget_args.extend(['--warc-header', 'theartistunion-track-id: {}'.format(identifier)])
                 wget_args.append('https://theartistunion.com/api/v3/tracks/{}.json'.format(identifier))
+                cookies = {"_artistunion_session":"0deaeeddc89ab045227f582359c65f86"}
+                r = requests.post('https://theartistunion.com/api/v3/tracks/{}/download.json'.format(identifier), json={"comment": "ArchiveTeam Archived This!"}, cookies=cookies)
+                url = r.text[8:-2]
+                if "http" in url:
+                    head, sep, tail = url.partition('?')
+                    wget_args.append(head)
+                    wget_args.append(url)
+                    print("added " + head)
+                    print("added " + url)
+
         else:
             raise Exception('Unknown item')
 

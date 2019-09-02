@@ -148,47 +148,6 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     original_fails = 0
   end
 
-  if string.match(url, "^https?://[^%.]+%.cloudfront%.net/tracks/stream_files/.+%.mp3%?[0-9]+$") then
-    local a, b = string.match(url, "^(https?://[^%.]+%.cloudfront%.net/tracks/)stream_files(/.+)%.mp3%?[0-9]+$")
-    table.insert(urls, { url=a .. "original_files" .. b .. ".wav" })
-    table.insert(urls, { url=a .. "original_files" .. b .. ".mp3" })
-    table.insert(urls, { url=a .. "original_files" .. b .. ".mp4" })
-    table.insert(urls, { url=a .. "original_files" .. b .. ".asf" })
-    table.insert(urls, { url=a .. "original_files" .. b .. ".aif" })
-    table.insert(urls, { url=a .. "original_files" .. b .. ".m4a" })
-    table.insert(urls, { url=a .. "original_files" .. b .. ".flac" })
-    -- IMPORTANT make sure to set number of fails possible in httploop_result
-  elseif string.match(url, "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.wav%?[0-9]+$") then
-    local a, b = string.match(url, "^(https?://[^%.]+%.cloudfront%.net/tracks/)original_files(/.+)%.wav%?[0-9]+$")
-    table.insert(urls, { url=a .. "original_files" .. b .. ".wav" })
-    table.insert(urls, { url=a .. "original_files" .. b .. ".mp3" })
-    table.insert(urls, { url=a .. "original_files" .. b .. ".mp4" })
-    table.insert(urls, { url=a .. "original_files" .. b .. ".asf" })
-    table.insert(urls, { url=a .. "original_files" .. b .. ".aif" })
-    table.insert(urls, { url=a .. "original_files" .. b .. ".m4a" })
-    table.insert(urls, { url=a .. "original_files" .. b .. ".flac" })
-    -- IMPORTANT make sure to set number of fails possible in httploop_result
-  elseif string.match(url, "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.mp3%?[0-9]+$") then
-    local a, b = string.match(url, "^(https?://[^%.]+%.cloudfront%.net/tracks/)original_files(/.+)%.mp3%?[0-9]+$")
-    table.insert(urls, { url=a .. "original_files" .. b .. ".wav" })
-    table.insert(urls, { url=a .. "original_files" .. b .. ".mp3" })
-    table.insert(urls, { url=a .. "original_files" .. b .. ".mp4" })
-    table.insert(urls, { url=a .. "original_files" .. b .. ".asf" })
-    table.insert(urls, { url=a .. "original_files" .. b .. ".aif" })
-    table.insert(urls, { url=a .. "original_files" .. b .. ".m4a" })
-    table.insert(urls, { url=a .. "original_files" .. b .. ".flac" })
-	-- IMPORTANT make sure to set number of fails possible in httploop_result
-  elseif string.match(url, "^https?://content%.theartistunion%.com/tracks/audio/stream_encode/.+%.mp3$") then
-    local a, b = string.match(url, "^(https?://content%.theartistunion%.com/tracks/audio/)stream_encode(/.+)%.mp3$")
-    table.insert(urls, { url=a .. ":original" .. b .. ".wav" })
-    table.insert(urls, { url=a .. ":original" .. b .. ".mp3" })
-  elseif string.match(url, "^https?://content%.theartistunion%.com/tracks/audio/stream_encode/[^%.]+%.mp3$") then
-    local a, b = string.match(url, "^(https?://content%.theartistunion%.com/tracks/audio/)stream_encode(/[^%.]+)%.mp3$")
-    table.insert(urls, { url=a .. ":original" .. b .. ".wav" })
-    table.insert(urls, { url=a .. ":original" .. b .. ".mp3" })
-    -- IMPORTANT make sure to set number of fails possible in httploop_result
-  end
-
   if allowed(url, nil)
       and not string.match(url, "^https?://[^%.]+%.cloudfront%.net")
       and status_code ~= 404 then
@@ -200,13 +159,15 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
       json = load_json_file(html)
       if json["audio_source"] == '' then
         io.stdout:write("Missing audio_source URL...\n")
-        abortgrab = true
       end
 	  if abortgrab == false then
         if not (string.match(json["audio_source"], "^https?://[^%.]+%.cloudfront%.net/tracks/stream_files/.+%.mp3[%?0-9]+$")
             or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.wav[%?0-9]+$")
             or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.mp3[%?0-9]+$")
+            or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.mp4[%?0-9]+$")
             or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.m4a[%?0-9]+$")
+            or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.flac[%?0-9]+$")
+            or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.bin[%?0-9]+$")
             or string.match(json["audio_source"],  "https?://content%.theartistunion%.com/tracks/audio/%x+/.+%.mp3$")
             or string.match(json["audio_source"], "^https?://content%.theartistunion%.com/tracks/audio/stream_encode/.+%.mp3$")) then
           io.stdout:write("Strange looking audio_source URL...\n")
@@ -278,7 +239,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
 
   if status_code ~= 200 and string.match(url["url"], "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.[a-z0-9]+$") then
     original_fails = original_fails + 1
-    if original_fails == 7 then
+    if original_fails == 1 then
       io.stdout:write("Could not get original file...\n")
       abortgrab = true
     end
