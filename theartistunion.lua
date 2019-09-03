@@ -16,6 +16,10 @@ local abortgrab = false
 local ids = {}
 local original_fails = 0
 
+function get(data,name)
+    return data:match("<"..name..">(.-)</"..name..">")
+end
+
 for ignore in io.open("ignore-list", "r"):lines() do
   downloaded[ignore] = true
 end
@@ -148,6 +152,27 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     original_fails = 0
   end
 
+  if status_code ~= 200 and string.match(url, "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.[a-z0-9]+$") then
+    original_fails = original_fails + 1
+    if original_fails == 1 then
+      io.stdout:write("Could not get original file...\n")
+    end
+  end
+
+  if string.match(url, "^https?://[^%.]+%.cloudfront%.net")
+    and status_code == 404 then
+  io.stdout:write("Hit 404 on cloudfront CDN\n")
+  io.stdout:write("Testing url " .. url .. "\n")
+  f=io.popen("curl -s " .. url); testurl=f:read"*a"; f:close()
+  keystate = get(testurl,"Code")
+    if string.match(keystate, "NoSuchKey") then
+      io.stdout:write("Track source files have been removed...\n")
+    elseif not string.match(keystate, "NoSuchKey") then
+      io.stdout:write("Some error has happened")
+      abortgrab = true
+    end
+  end
+
   if allowed(url, nil)
       and not string.match(url, "^https?://[^%.]+%.cloudfront%.net")
       and status_code ~= 404 then
@@ -168,6 +193,7 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
             or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.m4a[%?0-9]+$")
             or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.flac[%?0-9]+$")
             or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.bin[%?0-9]+$")
+            or string.match(json["audio_source"],  "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+[%?0-9]+$")
             or string.match(json["audio_source"],  "https?://content%.theartistunion%.com/tracks/audio/%x+/.+%.mp3$")
             or string.match(json["audio_source"], "^https?://content%.theartistunion%.com/tracks/audio/stream_encode/.+%.mp3$")) then
           io.stdout:write("Strange looking audio_source URL...\n")
@@ -235,14 +261,6 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
   if (status_code >= 200 and status_code <= 399) then
     downloaded[url["url"]] = true
     downloaded[string.gsub(url["url"], "https?://", "http://")] = true
-  end
-
-  if status_code ~= 200 and string.match(url["url"], "^https?://[^%.]+%.cloudfront%.net/tracks/original_files/.+%.[a-z0-9]+$") then
-    original_fails = original_fails + 1
-    if original_fails == 1 then
-      io.stdout:write("Could not get original file...\n")
-      abortgrab = true
-    end
   end
 
   if abortgrab == true then
