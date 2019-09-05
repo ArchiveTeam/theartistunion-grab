@@ -47,7 +47,7 @@ allowed = function(url, parenturl)
   if string.match(url, "'+")
       or string.match(url, "[<>\\%*%$;%^%[%],%(%){}]")
       or string.match(url, "facebook%.com")
-      or string.match(url, "^https?://www%.?youtube%.com")then
+      or string.match(url, "^https?://[^/]*youtube%.com")then
     return false
   end
 
