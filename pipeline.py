@@ -59,7 +59,7 @@ if not WGET_LUA:
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = '20190906.01'
+VERSION = '20190907.01'
 USER_AGENT = 'ArchiveTeam'
 TRACKER_ID = 'theartistunion'
 TRACKER_HOST = 'tracker.archiveteam.org'
@@ -208,31 +208,36 @@ class WgetArgs(object):
             for identifier in range(start, end+1):
                 identifier = self.int_to_str(identifier).zfill(6)
                 wget_args.extend(['--warc-header', 'theartistunion-track-id: {}'.format(identifier)])
-                cookies = {"_artistunion_session":"0deaeeddc89ab045227f582359c65f86"}
+                cookies = {'_artistunion_session':'0deaeeddc89ab045227f582359c65f86'}
                 while True:
-                    r = requests.post('https://theartistunion.com/api/v3/tracks/{}/download.json'.format(identifier), json={"comment": "ArchiveTeam Archived This!"}, cookies=cookies)
+                    r = requests.post('https://theartistunion.com/api/v3/tracks/{}/download.json'.format(identifier), json={'comment': 'ArchiveTeam Archived This!'}, cookies=cookies)
                     if r.status_code == 404:
-                        print("Track {} does not exist.".format(identifier))
+                        print('Track {} does not exist.'.format(identifier))
                         wget_args.append('https://theartistunion.com/api/v3/tracks/{}.json'.format(identifier))
                         break
-                    elif "This track doesn't have a source file yet. Try downloading later." in r.text:
-                        print("Track {} has been DMCA'd".format(identifier))
+                    elif 'This track doesn\'t have a source file yet. Try downloading later.' in r.text:
+                        print('Track {} has been DMCA\'d'.format(identifier))
                         break
                     elif r.status_code != 200:
-                        print("Site is offline. Sleeping....")
+                        print('Site is offline. Sleeping....')
                         time.sleep(3)
                     else:
-                        print("Original files found for track {}".format(identifier))
+                        print('Original files found for track {}'.format(identifier))
                         wget_args.append('https://theartistunion.com/api/v3/tracks/{}.json'.format(identifier))
                         break
                 url = r.text[8:-2]
-                if "http" in url:
+                if 'http' in url:
                     head, sep, tail = url.partition('?')
                     wget_args.append(head)
                     wget_args.append(url)
-                    print("Added " + head + " from track {}".format(identifier))
-                    print("Added " + url + " from track {}".format(identifier))
-
+                    print('Added ' + head + ' from track {}'.format(identifier))
+                    print('Added ' + url + ' from track {}'.format(identifier))
+        elif item_type.lower() == 'user':
+            for user in item_value.split(':'):
+                wget_args.extend(['--warc-header', 'theartistunion-user-id: ' +
+                                  user])
+                wget_args.append('https://theartistunion.com/api/v3/users/{}.json'
+                                 .format(user))
         else:
             raise Exception('Unknown item')
 

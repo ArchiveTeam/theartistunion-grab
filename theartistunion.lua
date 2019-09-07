@@ -62,6 +62,12 @@ allowed = function(url, parenturl)
     tested[s] = tested[s] + 1
   end
 
+  for s in string.gmatch(url, "([0-9a-zA-Z_]+)") do
+    if ids[s] then
+      return true
+    end
+  end
+
   for s in string.gmatch(url, "([0-9a-f]+)") do
     if ids[s] then
       return true
@@ -213,6 +219,21 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
           check(json["audio_source"])
         end
       end
+    elseif string.match(url, "^https?://theartistunion%.com/api/v3/users/[^%.]+%.json$") then
+      local user = string.match(url, "([^%.]+)%.json$")
+      check("https://theartistunion.com/" .. user)
+      check("https://theartistunion.com/" .. user .. "/tracks")
+      check("https://theartistunion.com/" .. user .. "/supported")
+      check("https://theartistunion.com/" .. user .. "/powerscore")
+      check("https://theartistunion.com/api/v3/users/" .. user .. "/donations.json")
+      check("https://theartistunion.com/api/v3/users/" .. user .. "/tracks.json?offset=0&limit=50")
+      check("https://theartistunion.com/api/v3/users/" .. user .. "/downloads.json?offset=0&limit=50")
+    elseif string.match(url, "%?offset=[0-9]+&limit=[0-9]+$") then
+      local start, offset, limit = string.match(url, "^([^%?]+)%?offset=([0-9]+)&limit=([0-9]+)$")
+      local json_data = load_json_file(html)
+      if #json_data == 50 then
+        check(start .. "?offset=" .. tostring(tonumber(offset)+tonumber(limit)) .. "&limit=" .. limit)
+      end
     end
     for newurl in string.gmatch(string.gsub(html, "&quot;", '"'), '([^"]+)') do
       checknewurl(newurl)
@@ -243,6 +264,11 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
   url_count = url_count + 1
   io.stdout:write(url_count .. "=" .. status_code .. " " .. url["url"] .. "  \n")
   io.stdout:flush()
+
+  if string.match(url["url"], "^https?://theartistunion%.com/api/v3/users/[^%.]+%.json$") then
+    print(string.match(url["url"], "([^%./]+)%.json$"))
+    ids[string.match(url["url"], "([^%/.]+)%.json$")] = true
+  end
 
   if (status_code >= 300 and status_code <= 399) then
     local newloc = string.match(http_stat["newloc"], "^([^#]+)")
