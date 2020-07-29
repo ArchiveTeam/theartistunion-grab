@@ -45,9 +45,13 @@ end
 
 allowed = function(url, parenturl)
   if string.match(url, "'+")
-      or string.match(url, "[<>\\%*%$;%^%[%],%(%){}]")
-      or string.match(url, "facebook%.com")
-      or string.match(url, "^https?://[^/]*youtube%.com")then
+    or string.match(url, "[<>\\%*%$;%^%[%],%(%){}]")
+    or string.match(url, "facebook%.com")
+    or string.match(url, "^https?://[^/]*youtube%.com")
+    or string.match(url, "^https?://[^/]*soundcloud%.com")
+    or string.match(url, "^https?://[^/]*instagram%.com")
+    or string.match(url, "^https?://[^/]*twitter%.com")
+    or string.match(url, "^https?://[^/]*spotify%.com") then
     return false
   end
 
@@ -74,8 +78,17 @@ allowed = function(url, parenturl)
     end
   end
 
+  for s in string.gmatch(url, "([A-Za-z0-9_%-]+)") do
+    if ids[s] then
+      return true
+    end
+  end
+
   if parenturl ~= nil
-      and string.match(parenturl, "^https?://theartistunion%.com/api/v3/tracks/[0-9a-f]+%.json$") then
+    and (
+      string.match(parenturl, "^https?://theartistunion%.com/api/v3/tracks/[0-9a-f]+%.json$")
+      or string.match(parenturl, "^https?://theartistunion%.com/api/v3/users/[^%.]+%.json$")
+    ) then
     return true
   end
   
@@ -219,8 +232,9 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
           check(json["audio_source"])
         end
       end
-    elseif string.match(url, "^https?://theartistunion%.com/api/v3/users/[^%.]+%.json$") then
-      local user = string.match(url, "([^%.]+)%.json$")
+    elseif string.match(url, "^https?://theartistunion%.com/api/v3/users/[^%./]+%.json$") then
+      local json_data = load_json_file(html)
+      local user = json_data["username"]
       check("https://theartistunion.com/" .. user)
       check("https://theartistunion.com/" .. user .. "/tracks")
       check("https://theartistunion.com/" .. user .. "/supported")
@@ -228,6 +242,18 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
       check("https://theartistunion.com/api/v3/users/" .. user .. "/donations.json")
       check("https://theartistunion.com/api/v3/users/" .. user .. "/tracks.json?offset=0&limit=50")
       check("https://theartistunion.com/api/v3/users/" .. user .. "/downloads.json?offset=0&limit=50")
+      if json_data["avatar_url"] ~= nil then
+        check(json_data["avatar_url"])
+      end
+      if json_data["powerscore"] ~= nil then
+        if json_data["powerscore"]["image_url"] ~= nil then
+          check(json_data["powerscore"]["image_url"])
+        end
+        if json_data["powerscore"]["user_avatar_url"] ~= nil then
+          check(json_data["powerscore"]["user_avatar_url"])
+        end
+      end
+      return urls
     elseif string.match(url, "%?offset=[0-9]+&limit=[0-9]+$") then
       local start, offset, limit = string.match(url, "^([^%?]+)%?offset=([0-9]+)&limit=([0-9]+)$")
       local json_data = load_json_file(html)
@@ -265,8 +291,7 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
   io.stdout:write(url_count .. "=" .. status_code .. " " .. url["url"] .. "  \n")
   io.stdout:flush()
 
-  if string.match(url["url"], "^https?://theartistunion%.com/api/v3/users/[^%.]+%.json$") then
-    print(string.match(url["url"], "([^%./]+)%.json$"))
+  if string.match(url["url"], "^https?://theartistunion%.com/api/v3/users/[^%./]+%.json$") then
     ids[string.match(url["url"], "([^%/.]+)%.json$")] = true
   end
 

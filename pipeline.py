@@ -36,21 +36,13 @@ if StrictVersion(seesaw.__version__) < StrictVersion('0.8.5'):
 # WGET_LUA will be set to the first path that
 # 1. does not crash with --version, and
 # 2. prints the required version string
-WGET_LUA = find_executable(
-    'Wget+Lua',
-    ['GNU Wget 1.14.lua.20130523-9a5c', 'GNU Wget 1.14.lua.20160530-955376b'],
-    [
-        './wget-lua',
-        './wget-lua-warrior',
-        './wget-lua-local',
-        '../wget-lua',
-        '../../wget-lua',
-        '/home/warrior/wget-lua',
-        '/usr/bin/wget-lua'
-    ]
+WGET_AT = find_executable(
+    'Wget+AT',
+    ['GNU Wget 1.20.3-at.20200401.01'],
+    ['./wget-at']
 )
 
-if not WGET_LUA:
+if not WGET_AT:
     raise Exception('No usable Wget+Lua found.')
 
 
@@ -59,8 +51,8 @@ if not WGET_LUA:
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = '20190907.01'
-USER_AGENT = 'ArchiveTeam'
+VERSION = '20200729.01'
+USER_AGENT = 'Archive Team'
 TRACKER_ID = 'theartistunion'
 TRACKER_HOST = 'tracker.archiveteam.org'
 
@@ -171,7 +163,7 @@ class WgetArgs(object):
 
     def realize(self, item):
         wget_args = [
-            WGET_LUA,
+            WGET_AT,
             '-U', USER_AGENT,
             '-nv',
             '--no-cookies',
@@ -193,7 +185,8 @@ class WgetArgs(object):
             '--warc-file', ItemInterpolation('%(item_dir)s/%(warc_file_base)s'),
             '--warc-header', 'operator: Archive Team',
             '--warc-header', 'theartistunion-dld-script-version: ' + VERSION,
-            '--warc-header', ItemInterpolation('theartistunion-item: %(item_name)s')
+            '--warc-header', ItemInterpolation('theartistunion-item: %(item_name)s'),
+            '--warc-dedup-url-agnostic',
         ]
 
         item_name = item['item_name']
