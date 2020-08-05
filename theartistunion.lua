@@ -235,10 +235,6 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
     elseif string.match(url, "^https?://theartistunion%.com/api/v3/users/[^%./]+%.json$") then
       local json_data = load_json_file(html)
       local user = json_data["username"]
-      check("https://theartistunion.com/" .. user)
-      check("https://theartistunion.com/" .. user .. "/tracks")
-      check("https://theartistunion.com/" .. user .. "/supported")
-      check("https://theartistunion.com/" .. user .. "/powerscore")
       check("https://theartistunion.com/api/v3/users/" .. user .. "/donations.json")
       check("https://theartistunion.com/api/v3/users/" .. user .. "/tracks.json?offset=0&limit=50")
       check("https://theartistunion.com/api/v3/users/" .. user .. "/downloads.json?offset=0&limit=50")
