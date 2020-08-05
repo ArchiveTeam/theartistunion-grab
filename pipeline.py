@@ -38,7 +38,7 @@ if StrictVersion(seesaw.__version__) < StrictVersion('0.8.5'):
 # 2. prints the required version string
 WGET_AT = find_executable(
     'Wget+AT',
-    ['GNU Wget 1.20.3-at.20200401.01'],
+    ['GNU Wget 1.20.3-at.20200401.01', 'GNU Wget 1.20.3-at.20200804.01'],
     ['./wget-at']
 )
 
@@ -51,7 +51,7 @@ if not WGET_AT:
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = '20200729.01'
+VERSION = '20200805.01'
 USER_AGENT = 'Archive Team'
 TRACKER_ID = 'theartistunion'
 TRACKER_HOST = 'tracker.archiveteam.org'
